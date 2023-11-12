@@ -5,9 +5,10 @@ namespace MAUIContactApp;
 
 public partial class MainPage : ContentPage
 {
-    public List<Contact> ContactList { get; set; }
+    #region Properties
+    private List<Contact> ContactList { get; set; }
 
-    string htmlSource = @"
+    private string htmlSource = @"
 <!DOCTYPE html>
 <html>
 <head></head>
@@ -54,19 +55,26 @@ public partial class MainPage : ContentPage
 </body>
 </html>
 ";
+    #endregion
+
+    #region Constructor
     public MainPage()
     {
         InitializeComponent();
         ContactList = new List<Contact>();
     }
+    #endregion
 
+    #region Override Method
     protected override void OnParentSet()
     {
         base.OnParentSet();
         webView.Source = new HtmlWebViewSource() { Html = htmlSource };
         webView.JavaScriptAction += MyWebView_JavaScriptAction;
     }
+    #endregion
 
+    #region Private Methods
     private void MyWebView_JavaScriptAction(object sender, Controls.JavaScriptActionEventArgs e)
     {
         Dispatcher.Dispatch(async () =>
@@ -76,12 +84,10 @@ public partial class MainPage : ContentPage
         });
     }
 
-    async Task LoadContactsAsync()
+    private async Task LoadContactsAsync()
     {
         try
         {
-            var status = await Permissions.CheckStatusAsync<Permissions.ContactsRead>();
-
             var contacts = await Communication.Contacts.Default.GetAllAsync();
             ContactList.Clear();
             foreach (var contact in contacts)
@@ -109,7 +115,9 @@ public partial class MainPage : ContentPage
             Console.WriteLine($"Error: {ex.Message}");
         }
     }
+    #endregion
 
+    #region Permission
     private async Task CheckPermissionAvail()
     {
         var status = await Permissions.CheckStatusAsync<Permissions.ContactsRead>();
@@ -149,7 +157,7 @@ public partial class MainPage : ContentPage
             // You may want to show a message explaining why you need the permission
         }
     }
-
+    #endregion
 }
 
 public class Contact

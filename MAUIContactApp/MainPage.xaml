@@ -7,14 +7,17 @@
     <StackLayout>
         <Frame Margin="20" BackgroundColor="LightGray" VerticalOptions="FillAndExpand">
             <StackLayout Spacing="30">
+                
+                <!--WebView Title-->
                 <Label Text="WebView" FontAttributes="Bold" FontSize="20" HorizontalOptions="Center"/>
 
+                <!--Loader-->
                 <StackLayout x:Name="LoadingView" IsVisible="False">
                     <ActivityIndicator x:Name="loader" HeightRequest="50" WidthRequest="50" Color="Black" HorizontalOptions="CenterAndExpand" IsRunning="True" />
                     <Label Text="Loading Contacts" HorizontalOptions="Center" FontSize="20" FontAttributes="Bold"/>
                 </StackLayout>
-                
 
+                <!--WebView To Load Html-->
                 <controls:HybridWebView x:Name="webView" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
             </StackLayout>
         </Frame>
