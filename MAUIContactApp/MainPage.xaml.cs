@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Communication = Microsoft.Maui.ApplicationModel.Communication;
 
 namespace MAUIContactApp;
 
@@ -78,7 +79,7 @@ public partial class MainPage : ContentPage
     {
         try
         {
-            var contacts = await Contacts.Default.GetAllAsync();
+            var contacts = await Communication.Contacts.Default.GetAllAsync();
             ContactList.Clear();
             foreach (var contact in contacts)
             {
