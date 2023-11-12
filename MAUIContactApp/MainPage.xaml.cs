@@ -69,9 +69,10 @@ public partial class MainPage : ContentPage
 
     private void MyWebView_JavaScriptAction(object sender, Controls.JavaScriptActionEventArgs e)
     {
-        Dispatcher.Dispatch(() =>
+        Dispatcher.Dispatch(async () =>
         {
-            _ = LoadContactsAsync();
+            LoadingView.IsVisible = true;
+            await CheckPermissionAvail();
         });
     }
 
@@ -79,6 +80,8 @@ public partial class MainPage : ContentPage
     {
         try
         {
+            var status = await Permissions.CheckStatusAsync<Permissions.ContactsRead>();
+
             var contacts = await Communication.Contacts.Default.GetAllAsync();
             ContactList.Clear();
             foreach (var contact in contacts)
@@ -90,16 +93,60 @@ public partial class MainPage : ContentPage
                 });
             }
 
-            Dispatcher.Dispatch(async () =>
+            // Adding 3 Sec Delay to show indicator
+            await Task.Delay(3000).ContinueWith(task =>
             {
-                await webView.EvaluateJavaScriptAsync(new EvaluateJavaScriptAsyncRequest("displayContacts(" + JsonSerializer.Serialize(ContactList) + ")"));
+                Dispatcher.Dispatch(async () =>
+                {
+                    await webView.EvaluateJavaScriptAsync(new EvaluateJavaScriptAsyncRequest("displayContacts(" + JsonSerializer.Serialize(ContactList) + ")"));
+                    LoadingView.IsVisible = false;
+                });
             });
-
         }
         catch (Exception ex)
         {
             // Handle exceptions here
             Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private async Task CheckPermissionAvail()
+    {
+        var status = await Permissions.CheckStatusAsync<Permissions.ContactsRead>();
+
+        if (status == PermissionStatus.Granted)
+        {
+            // Permission has already been granted
+            // Now you can read contacts
+            await LoadContactsAsync();
+        }
+        else if (status == PermissionStatus.Denied)
+        {
+            // Permission has been denied
+            // You may want to show a message explaining why you need the permission
+            await RequestPermission();
+        }
+        else
+        {
+            await RequestPermission();
+        }
+    }
+
+    private async Task RequestPermission()
+    {
+        // Permission has not been requested yet
+        var requestResult = await Permissions.RequestAsync<Permissions.ContactsRead>();
+
+        if (requestResult == PermissionStatus.Granted)
+        {
+            // Permission granted
+            // Now you can read contacts
+            await LoadContactsAsync();
+        }
+        else
+        {
+            // Permission denied
+            // You may want to show a message explaining why you need the permission
         }
     }
 
