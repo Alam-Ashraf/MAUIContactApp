@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAUIContactApp.MainPage"
+             xmlns:controls="clr-namespace:MAUIContactApp.Controls">
+
+    <StackLayout>
+        <Frame Margin="20" BackgroundColor="LightGray">
+
+            <StackLayout Spacing="10">
+                <Label Text="WebView" HorizontalOptions="Center"/>
+                <controls:HybridWebView x:Name="webView" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
+            </StackLayout>
+        </Frame>
+    </StackLayout>
+
+</ContentPage>
